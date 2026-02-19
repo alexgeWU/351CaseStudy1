@@ -1,0 +1,6 @@
+*.asv
+*.mex*
+*.slxc
+*.mat
+!/data/*.mat  # Keep data files if they are essential for the case study
+resources/
