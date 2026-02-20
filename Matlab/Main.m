@@ -12,11 +12,11 @@ clearvars('-except','xs','xsfs','xg','xgfs','xb','xbfs');
 % cutoff freq is 1/(2*pi*R*C)
 
 RLP = 100;
-CLP = 6e-5;
+CLP = 6e-5; % -3dB around 160 Hz
 tfLP = tf([1], [RLP*CLP 1]);
 
 RHP = 100;
-CHP = 6e-7;
+CHP = 6e-7; % -3dB around 14.5k Hz
 tfHP = tf([RHP*CHP 0], [RHP*CHP 1]);
 
 R1 = 10;    L1 = 1e-9;      C1 = 1e-5;
