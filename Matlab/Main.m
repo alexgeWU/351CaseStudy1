@@ -31,3 +31,16 @@ tf3 = tf([R3/L3 0],[1 R3/L3 1/(L3*C3)]);
 plotTFs(tfLP,tf1,tf2,tf3,tfHP);
 
 plotSpectrograms(xs,xsfs,xg,xgfs,xb,xbfs);
+
+h_low = idealFilter(0, 100, 1000);
+h_mid = idealFilter(100, 1000, 1000);
+h_high = idealFilter(1000, 10000, 1000);
+
+figure(1);
+sgtitle('Filters');
+subplot(3, 1, 1);
+stem(abs(h_low)), title('Lowpass');
+subplot(3, 1, 2);
+stem(abs(h_mid)), title('Bandpass');
+subplot(3, 1, 3);
+stem(abs(h_high)), title('Highpass');
