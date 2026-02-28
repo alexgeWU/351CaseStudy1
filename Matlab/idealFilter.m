@@ -17,5 +17,5 @@ function h = idealFilter(low_cf, high_cf, N)
     % Handle symmetry for other band
     Fourier_series(N-K_h+1:N-K_l+1) = 1;
 
-    h = ifft(Fourier_series);
+    h = fftshift(ifft(Fourier_series));
 end
