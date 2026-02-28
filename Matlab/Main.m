@@ -14,12 +14,14 @@ disp('Loading audio files...');
 %% Creating Filters
 disp('Defining filters...');
 
+% f_center = 1 / 2*pi*sqrt(LC)
+% bandwidth = R / 2*pi*L
+
 R0 = 140;   L0 = 500e-3; C0 = 50e-6;
 R1 = 220;  L1 = 112e-3; C1 = 10e-6;
 R2 = 200;  L2 = 39e-3;  C2 = 1e-6;
 R3 = 800;  L3 = 30e-3;  C3 = .1e-6;
 R4 = 1300; L4 = 20e-3;  C4 = .01e-6;
-
 
 tf0 = tf([R0/L0 0],[1 R0/L0 1/(L0*C0)]);
 tf1 = tf([R1/L1 0],[1 R1/L1 1/(L1*C1)]);
@@ -31,8 +33,8 @@ filters = {tf0, tf1, tf2, tf3, tf4};
 
 %% Modify gain and Analyze Response with Plots
 
-% gain = [1.5 1 1 1 1]; % normal(ish)
-gain = [10 1 1 1 1]; % Bass boost
+gain = [.8 1 .75 .95 .82]; % normal(ish)
+% gain = [10 1 1 1 1]; % Bass boost
 % gain = [.7 .8 .5 3.5 3.5]; % Treble boost
 gainBird = [.001 .001 .01 6 10];
 
