@@ -9,6 +9,7 @@ clearvars('-except','xs','xsfs','xg','xgfs','xb','xbfs');
 [xg, xgfs] = audioread('Giant Steps Bass Cut.wav');
 [xb, xbfs] = audioread('SNR Recording 2026-02-15 08_58.wav');
 
+
 % cutoff freq is 1/(2*pi*R*C)
 
 RLP = 100;
@@ -33,8 +34,8 @@ plotTFs(tfLP,tf1,tf2,tf3,tfHP);
 plotSpectrograms(xs,xsfs,xg,xgfs,xb,xbfs);
 
 h_low = idealFilter(0, 100, 1000);
-h_mid = idealFilter(100, 1000, 1000);
-h_high = idealFilter(1000, 10000, 1000);
+h_mid = idealFilter(500, 5000, 1000);
+% h_high = idealFilter(1000, 10000, 1000);
 
 figure(1);
 sgtitle('Filters');
@@ -42,5 +43,17 @@ subplot(3, 1, 1);
 stem(abs(h_low)), title('Lowpass');
 subplot(3, 1, 2);
 stem(abs(h_mid)), title('Bandpass');
-subplot(3, 1, 3);
-stem(abs(h_high)), title('Highpass');
+% subplot(3, 1, 3);
+% stem(abs(h_high)), title('Highpass');
+
+% Apply the filters to the audio signals
+filteredXgLow = filter(h_low, 1, xg);
+filteredXgMid = filter(h_mid, 1, xg);
+% filteredXbHigh = filter(h_high, 1, xg);
+% sound(real(filteredXgLow), xgfs);
+% sound(real(filteredXgMid), xgfs);
+combined = real(filteredXgMid) + real(filteredXgLow);
+% sound(combined, xgfs);
+
+baseboost = 50 * filteredXgLow;
+sound(real(baseboost), xgfs);
