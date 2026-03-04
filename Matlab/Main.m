@@ -23,11 +23,17 @@ R2 = 200;  L2 = 39e-3;  C2 = 1e-6;
 R3 = 800;  L3 = 30e-3;  C3 = .1e-6;
 R4 = 1300; L4 = 20e-3;  C4 = .01e-6;
 
-tf0 = tf([R0/L0 0],[1 R0/L0 1/(L0*C0)]);
-tf1 = tf([R1/L1 0],[1 R1/L1 1/(L1*C1)]);
-tf2 = tf([R2/L2 0],[1 R2/L2 1/(L2*C2)]);
-tf3 = tf([R3/L3 0],[1 R3/L3 1/(L3*C3)]);
-tf4 = tf([R4/L4 0],[1 R4/L4 1/(L4*C4)]);
+
+b0 = [R0/L0 0]; a0 = [1 R0/L0 1/(L0*C0)];
+b1 = [R1/L1 0]; a1 = [1 R1/L1 1/(L1*C1)];
+b2 = [R2/L2 0]; a2 = [1 R2/L2 1/(L2*C2)];
+b3 = [R3/L3 0]; a3 = [1 R3/L3 1/(L3*C3)];
+b4 = [R4/L4 0]; a4 = [1 R4/L4 1/(L4*C4)];
+tf0 = tf(b0, a0);
+tf1 = tf(b1, a1);
+tf2 = tf(b2, a2);
+tf3 = tf(b3, a3);
+tf4 = tf(b4, a4);
 
 filters = {tf0, tf1, tf2, tf3, tf4};
 
@@ -46,7 +52,7 @@ tf_total = gain(1)*tf0 + ...
 
 options = bodeoptions;
 options.FreqUnits = 'Hz';
-bode(tf_total, options);
+figure, bode(tf_total, options);
 
 plotTFs(tf0,tf1,tf2,tf3,tf4);
 
