@@ -6,6 +6,7 @@
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage{comment}
+\usepackage{circuitikz}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
@@ -26,7 +27,7 @@ St. Louis, MO \\
 a.hamzeh@wustl.edu}
 \and
 \IEEEauthorblockN{Alex Ge}
-\IEEEauthorblockA{\textit{Computer Engineering} \\
+\IEEEauthorblockA{\textit{Electrical and Systems Engineering} \\
 \textit{Washington University in St. Louis}\\
 St. Louis, MO \\
 age@wustl.edu}
@@ -44,7 +45,7 @@ age@wustl.edu}
 Audio recordings often contain unwanted noise that can degrade the quality of the sound. 
 The ability to selectively amplify or attenuate specific frequency bands is fundamental to modern audio processing systems, 
 including equalizers found in smartphones, music players, and professional audio equipment.
-By modifying the spectral content of a signal, equalization can enhance clarity, tonal balance, and supress unwanted noise.
+By modifying the spectral content of a signal, equalization can enhance clarity, tonal balance, and suppress unwanted noise.
 
 A multi-band equalizer is a powerful tool for enhancing audio by allowing users to adjust the amplitude of specific frequency bands.
 This is accomplished by decomposing an input signal into several frequency-selective components using filters
@@ -52,7 +53,7 @@ such as low-pass, high-pass, band-pass, and band-stop filters.
 Each band is independently scaled by a gain factor before recombining the filtered signals.
 This structure enables targeted control over bass, midrange, and treble content while preserving overall signal integrity.
 
-Frequency-selective filtering can be implemented using continuous-time RC circuit models, which provide well-characterized impulse and frequency responses. 
+Frequency-selective filtering can be implemented using continuous-time circuit models, which provide well-characterized impulse and frequency responses. 
 First-order RC filters allow straightforward analytical modeling of magnitude and phase behavior, making them suitable for constructing modular equalizer stages. 
 When multiple filters operate in parallel and are combined through weighted summation, the resulting system achieves customizable spectral shaping.
 
@@ -81,7 +82,56 @@ identification of bird vocalizations in noisy environments through spectral anal
 
 
 \section{Methods}
-[insert text]
+Resistor-Inductor-Capacitor (RLC) circuits have long been used as a method to implement band-pass filters. We can derive transfer functions using the impedance of the devices, and because these devices are linear, they can be applied to each sinusoidal component of an input function. Consider the following circuit:
+
+\begin{figure}[h]
+\centering
+\begin{circuitikz}
+\draw
+(0,0) to[sV, l=$v_{in}(t)$] (0,2)
+      to[L, l=$L$] (3,2)
+      to[C, l=$C$] (5,2)
+      to[R, l=$R$] (5,0)
+      -- (6,0)
+      -- (0,0);
+
+\draw (5,2) -- (6,2);
+
+% terminal dots
+\draw (6,2) node[circ]{};
+\draw (6,0) node[circ]{};
+
+% polarity labels
+\node at (6.3,2) {$+$};
+\node at (6.3,0) {$-$};
+
+% output label
+\node at (6.4,1) {$v_{out}(t)$};
+
+\end{circuitikz}
+\caption{Series RLC band-pass filter with output measured across the resistor.}
+\end{figure}
+
+This circuit picks out one frequency band and attenuates others based on the values passed into R, L, and C. Equation 1 is the $i$'th's circuit's transfer function where $i =1,2, ..., 5$ (see Appendix II.A for derivation).
+
+\begin{equation}
+\large
+     X_i(jw) = \frac{jw\frac{R}{L}}{(j\omega)^2 + j\omega \frac{R}{L} + \frac{1}{L C}}
+\end{equation}
+
+Looking at Equation 1, we can see that if $\omega =0$, $X_i(j\omega) = 0$, and if $\omega \to \infty$, $X_i(j\omega) \to 0$. Thus we know that this filter is neither lowpass nor highpass. In fact the center frequency for this circuit configuration is $\omega=\frac{1}{}$
+
+Next, we will introduce the continuous time linear constant coefficient differential equation (LCCDE) for this circuit, which is given by (see Appendix II.B for derivation).
+
+\begin{equation}
+    \large
+    \frac{dv_{in}}{dt} = \frac{L}{R}\frac{d^2v_{out}}{dt^2} + \frac{dv_{out}}{dt} + \frac{1}{RC}v_{out} 
+\end{equation}
+
+The optimal input parameters R, L, and C for each circuit were determined qualitatively through trial and error and are listed in Appendix II.C. Note that different circuit parameters were chosen for the song task and the bird task. We kept the same band ranges by keeping $L$ and $C$ constant since they determine the center frequency. Then, when switching to the bird task, we changed $R$ in each band in order to change the $Q$ factor of the circuit. The $Q$ factor intuitively measures how well the circuit can "pick" out its frequency range. For the bird case, we wanted a smaller range of frequencies in the higher frequency case, so we increased the $Q$ factor.
+
+ 
+
 
 
 \section{Results}
@@ -98,5 +148,147 @@ identification of bird vocalizations in noisy environments through spectral anal
 \bibitem{b3} M. E. Gilpin, "The role of spatial structure in predator-prey dynamics," Ecology, vol. 89, no. 9, pp. 2585-2597, 2008. [Online]. Available: https://pubmed.ncbi.nlm.nih.gov/18707412/. [Accessed: Mar. 15, 2025].
 
 \end{thebibliography}
+
+\newpage
+\appendices
+\onecolumn
+\section{II. Methods}
+\subsection{Circuit Frequency Response Derivation}
+\begin{figure}[h]
+\centering
+\begin{circuitikz}
+\draw
+(0,0) to[sV, l=$v_{in}(t)$] (0,2)
+      to[L, l=$L$] (3,2)
+      to[C, l=$C$] (5,2)
+      to[R, l=$R$] (5,0)
+      -- (6,0)
+      -- (0,0);
+
+\draw[-latex, thick] (1,1.75) -- (2,1.75) node[midway, below] {$i(t)$};
+
+\draw (5,2) -- (6,2);
+
+% terminal dots
+\draw (6,2) node[circ]{};
+\draw (6,0) node[circ]{};
+
+% polarity labels
+\node at (6.3,2) {$+$};
+\node at (6.3,0) {$-$};
+
+% output label
+\node at (6.4,1) {$v_{out}(t)$};
+
+\end{circuitikz}
+\caption{Time Domain Series RLC band-pass filter with output measured across the resistor.}
+\end{figure}
+First, we want to convert this circuit to the frequency domain using the impedance of the devices in the circuit.
+
+\begin{figure}[h]
+\centering
+\begin{circuitikz}
+\draw
+(0,0) to[sV, l=$V_{in}$] (0,2)
+      to[L, l=$j\omega L$] (3,2)
+      to[C, l=$\frac{-j}{\omega C}$] (5,2)
+      to[R, l=$R$] (5,0)
+      -- (6,0)
+      -- (0,0);
+
+\draw (5,2) -- (6,2);
+
+% terminal dots
+\draw (6,2) node[circ]{};
+\draw (6,0) node[circ]{};
+
+% polarity labels
+\node at (6.3,2) {$+$};
+\node at (6.3,0) {$-$};
+
+% output label
+\node at (6.4,1) {$V_{out}$};
+
+\end{circuitikz}
+\caption{Frequency domain equivalent.}
+\end{figure}
+
+Now, we can perform voltage division across the resistor in order to obtain $V_{out}$ in terms of $V_{in}$.
+
+\begin{equation}
+    \large
+    V_{out} = V_{in}\frac{R}{R + j\omega L - \frac{j}{\omega C}}
+\end{equation}
+
+Multiply everything by $\frac{j\omega}{L}$.
+
+\begin{equation}
+    \large
+     V_{out} = V_{in}\frac{jw\frac{R}{L}}{(j\omega)^2 + j\omega \frac{R}{L} + \frac{1}{L C}}
+\end{equation}
+
+We know that the frequency response is the ratio of the output and input voltages. So,
+
+\begin{equation}
+    \large
+    X(jw) = \frac{V_{out}}{V_{in}} = \frac{jw\frac{R}{L}}{(j\omega)^2 + j\omega \frac{R}{L} + \frac{1}{L C}}
+\end{equation}
+
+\subsection{Circuit Continuous Time LCCDE Derivation}
+From the circuit in Figure x, perform Kirchhoff's Voltage Law.
+
+\begin{equation}
+    \large
+    v_{in}(t)= L\frac{di}{dt} +  \frac{1}{C}\int i(t) dt +  iR
+\end{equation}
+
+Now, differentiate both sides.
+\begin{equation}
+    \large
+    \frac{dv_{in}}{dt} = L\frac{d^2i}{dt^2} + R\frac{di}{dt} + \frac{1}{C}i 
+\end{equation}
+
+We know that $v_{out}=iR \implies i = \frac{v_{out}}{R}$. So,
+
+\begin{equation}
+    \large
+    \frac{dv_{in}}{dt} = \frac{L}{R}\frac{d^2v_{out}}{dt^2} + \frac{dv_{out}}{dt} + \frac{1}{RC}v_{out} 
+\end{equation}
+\newpage
+\subsection{Optimal Circuit Parameters}
+\begin{table}[h]
+\centering
+
+\begin{minipage}{0.45\linewidth}
+\centering
+\large
+\begin{tabular}{c|ccc}
+$i$ & R (\Omega) & L (mH) & C (\mu F)\\
+\hline
+1 & 140  & 500 & 50   \\
+2 & 220  & 112 & 10   \\
+3 & 200  & 39  & 1    \\
+4 & 800  & 30  & 0.1  \\
+5 & 1300 & 20  & 0.01 \\
+\end{tabular}
+\caption{Optimal circuit parameters for song task}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\linewidth}
+\centering
+\large
+\begin{tabular}{c|ccc}
+$i$ & R (\Omega) & L (mH) & C (\mu F)\\
+\hline
+1 & 33.3  & 500 & 50   \\
+2 & 26.5  & 112 & 10   \\
+3 & 39.5  & 39  & 1    \\
+4 & 50    & 30  & 0.1  \\
+5 & 50    & 20  & 0.01 \\
+\end{tabular}
+\caption{Optimal circuit parameters for bird task}
+\end{minipage}
+
+\end{table}
 
 \end{document}

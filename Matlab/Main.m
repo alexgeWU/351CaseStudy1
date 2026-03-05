@@ -9,7 +9,6 @@ clearvars('-except','xs','xsfs','xg','xgfs','xb','xbfs');
 disp('Loading audio files...');
 [xs, xsfs] = audioread('Space Station - Treble Cut.wav');
 [xg, xgfs] = audioread('Giant Steps Bass Cut.wav');
-[xb, xbfs] = audioread('SNR Recording 2026-02-15 08_58.wav');
 
 %% Creating Filters
 disp('Defining filters...');
