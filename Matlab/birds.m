@@ -12,20 +12,13 @@ disp('Loading audio files...');
 %% Creating Filters
 disp('Defining filters...');
 
-% f_center = 1 / 2*pi*sqrt(LC)
-% bandwidth = R / 2*pi*L
-% 
-% R0 = 140;  L0 = 500e-3; C0 = 50e-6;
-% R1 = 220;  L1 = 112e-3; C1 = 10e-6;
-% R2 = 200;  L2 = 39e-3;  C2 = 1e-6;
-% R3 = 800;  L3 = 30e-3;  C3 = .1e-6;
-% R4 = 1300; L4 = 20e-3;  C4 = .01e-6;
 
-R0 = 33.3;  L0 = 500e-3; C0 = 50e-6;     % Q ~ 3.0
-R1 = 26.5;  L1 = 112e-3; C1 = 10e-6;     % Q ~ 4.0
-R2 = 39.5;  L2 = 39e-3;  C2 = 1e-6;      % Q ~ 5.0
-R3 = 50;   L3 = 30e-3;  C3 = .1e-6;     % Q ~ 5.0
-R4 = 50;   L4 = 20e-3;  C4 = .01e-6;    % Q ~ 5.0
+R0 = 1e3;   L0 = 3.9e-3; C0 = 10e-6;  % 200 Hz
+R1 = 10;   L1 = 7e-3;   C1 = 1e-6;     % 1.9 kHz
+R2 = 10;   L2 = 4.7e-3; C2 = 1e-6;     % 2.3 kHz
+R3 = 100;  L3 = 3e-3;   C3 = 1e-6;     % 2.9 kHz
+R4 = 26.5; L4 = 2.2e-3; C4 = 1e-6;     % 3.4 kHz
+
 
 tf0 = tf([R0/L0 0],[1 R0/L0 1/(L0*C0)]);
 tf1 = tf([R1/L1 0],[1 R1/L1 1/(L1*C1)]);
@@ -37,10 +30,7 @@ filters = {tf0, tf1, tf2, tf3, tf4};
 
 %% Modify gain and Analyze Response with Plots
 
-% gain = [.8 1 .75 .95 .82]; % normal(ish)
-% gain = [10 1 1 1 1]; % Bass boost
-% gain = [.7 .8 .5 3.5 3.5]; % Treble boost
-gain = [.001 .001 1 60 100]; % Bird
+gain = [0 1 6 5 10]; % Bird
 
 tf_total = gain(1)*tf0 + ...
            gain(2)*tf1 + ...
@@ -72,10 +62,12 @@ disp('Done ploting');
 
 M = 1000000;
 playerxb = audioplayer(xb, xbfs);
-playeryb = audioplayer(yb, xbfs);
+playeryb = audioplayer(yb(M:end), xbfs);
+audiowrite('filteredbirds.wav', yb, xbfs);
+
 
 disp('Original Bird Sounds...');
-playblocking(playerxb);
+% playblocking(playerxb);
 disp('Equalized Bird Sounds..');
 playblocking(playeryb);
 
