@@ -51,11 +51,12 @@ yb = processSignal(xb, xbfs, filters, gain);
 %% Plot Spectrograms Original vs Equalized
 disp('Generating plots...');
 
-figure;
+figure(5);
 subplot(1,2,1); spectrogram(xb, 1024, 200, 1024, xbfs, 'yaxis');
 title('Original Bird Noises'); clim([-120 -80]);
 subplot(1,2,2); spectrogram(yb, 1024, 200, 1024, xbfs, 'yaxis');
 title('Filtered Bird Noises'); clim([-110 -80]);
+exportgraphics(gcf, 'figures/birdspectograms.jpg')
 disp('Done ploting');
 
 %% Play Audio
