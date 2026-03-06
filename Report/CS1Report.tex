@@ -30,11 +30,7 @@ St. Louis, MO \\
 a.hamzeh@wustl.edu}
 \and
 \IEEEauthorblockN{Alex Ge}
-<<<<<<< HEAD
-\IEEEauthorblockA{\textit{Computer Science and Engineering} \\
-=======
 \IEEEauthorblockA{\textit{Electrical and Systems Engineering} \\
->>>>>>> 53fac5c1a6a6bae61dc7edf6aae69bc37615ac72
 \textit{Washington University in St. Louis}\\
 St. Louis, MO \\
 age@wustl.edu}
@@ -43,7 +39,13 @@ age@wustl.edu}
 \maketitle
 
 \begin{abstract}
-[insert text]
+This project presents the design and implementation of a multi-band audio equalizer using continuous-time band-pass filters modeled with RLC circuits.
+ The equalizer decomposes an input signal into five frequency-selective components, applies independent gain adjustments to each band, and recombines the filtered signals to produce a modified output.
+  The frequency response and impulse response of each filter stage were analyzed to verify the intended band-pass behavior.
+   Gain presets were then used to demonstrate common equalizer configurations, including bass boost, treble boost, and a near-unity response.
+    The system was applied to both music recordings and an environmental audio recording containing bird vocalizations.
+     Spectrogram analysis shows that the equalizer enhances the visibility of bird chirps by amplifying frequency bands associated with vocalizations while attenuating background noise.
+      These results demonstrate that a parallel filter-bank architecture provides an effective method for frequency-selective audio enhancement and acoustic signal analysis.
 \end{abstract}
 
 
@@ -94,7 +96,7 @@ Let $h_i(t)$ be the impulse response of an linear time-invariant (LTI) system th
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1.1\linewidth]{systemdesign.jpg}
+    \includegraphics[width=1.1\linewidth]{figs/systemdesign.jpg}
     \caption{Equalizer system design.}
     \label{fig:placeholder}
 \end{figure}
@@ -160,7 +162,7 @@ In this task, we aim to minimize loss of frequency bands while also separating b
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1.1\linewidth]{systemdesign_song.jpg}
+    \includegraphics[width=1.1\linewidth]{figs/systemdesign_song.jpg}
     \caption{Equalizer system design with song task frequency ranges}
     \label{fig:placeholder}
 \end{figure}
@@ -172,34 +174,137 @@ For the bird task, we want narrower bands around precise frequencies. We found t
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1.1\linewidth]{systemdesign_bird.jpg}
+    \includegraphics[width=1.1\linewidth]{figs/systemdesign_bird.jpg}
     \caption{Equalizer system design with bird task frequency ranges}
     \label{fig:placeholder}
 \end{figure}
 
 
 \section{Results}
-[insert text]
+
+The performance of the designed equalizer was evaluated by examining the frequency response of the individual filters, the combined system response for different preset gain configurations, and the enhancement of bird vocalizations in a noisy recording.
+
+\subsection{Individual Filter Responses}
+
+Figure~\ref{fig:filter_responses} shows the magnitude and phase responses of the five band-pass filters used in the equalizer design. Each filter isolates a specific portion of the frequency spectrum corresponding to the bands identified during system design. The magnitude plots show clear peaks at the intended center frequencies, confirming that each RLC circuit successfully isolates its target band while attenuating frequencies outside the passband.
+
+The phase responses demonstrate the expected phase transitions typical of band-pass filters. Together, these results confirm that the individual filter stages operate as intended and provide the frequency selectivity necessary for the equalizer architecture.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.48\textwidth]{figs/filter_freq_response_1.jpg}
+\caption{Magnitude and phase responses of the five band-pass filters used in the equalizer. Each filter isolates a specific frequency band.}
+\label{fig:filter_responses}
+\end{figure}
+
+\subsection{Equalizer Preset Responses}
+
+To evaluate the behavior of the overall system, three preset gain configurations were implemented: normal response, bass boost, and treble boost. Figure~\ref{fig:eq_response} shows the resulting magnitude and phase responses of the full equalizer system.
+
+The bass boost configuration increases gain in the lower frequency bands while attenuating higher frequencies, producing a stronger response in the low-frequency region. Conversely, the treble boost configuration increases gain in higher frequency bands while reducing lower-frequency components. The normal preset maintains a relatively flat frequency response across the audible range. These results demonstrate that the gain vector effectively controls the spectral shaping of the signal.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.48\textwidth]{figs/filter_ovr_response_1.jpg}
+\caption{Overall equalizer magnitude and phase responses for three preset gain configurations: normal, bass boost, and treble boost.}
+\label{fig:eq_response}
+\end{figure}
+
+\subsection{Bird Vocalization Enhancement}
+
+The equalizer was applied to a field recording containing bird vocalizations embedded in environmental noise. Figure~\ref{fig:bird_spectrogram} shows spectrograms of the original recording and the filtered signal after applying the designed equalizer. In the original spectrogram, broadband noise is present across much of the lower frequency spectrum, which reduces the visibility of short-duration vocalization events.
+
+The boxed region highlights a time interval where multiple bird chirps occur within a narrow frequency band. In the original recording, these chirps appear faint and partially masked by background noise. After equalization, the same region shows significantly higher intensity and clearer vertical structures corresponding to individual chirps. The zoomed-in panels emphasize that the filtered signal exhibits stronger spectral contrast between the bird vocalizations and the surrounding noise floor.
+
+This improvement occurs because the equalizer selectively amplifies the frequency bands where bird calls were observed while attenuating lower-frequency noise components. As a result, individual vocalization events become easier to distinguish in both time and frequency. The enhanced visibility of these chirps allows recurring vocalization patterns to be more readily identified and analyzed within the spectrogram.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.48\textwidth]{figs/birdedited.jpg}
+\caption{Spectrogram comparison of the original bird recording (left) and the filtered signal (right). The zoomed region highlights improved visibility of bird vocalizations after equalization.}
+\label{fig:bird_spectrogram}
+\end{figure}
+
+Overall, the results demonstrate that the multi-band equalizer successfully isolates frequency bands, allows flexible spectral shaping through gain presets, and enhances biologically relevant acoustic features in environmental recordings.
 
 \section{Conclusion}
-[insert text]
+
+In this project, a multi-band equalizer was designed and implemented using continuous-time band-pass filters modeled with RLC circuits. The system decomposes an input signal into several frequency-selective components, applies independent gain adjustments to each band, and recombines the filtered signals to produce a modified output. By carefully selecting the circuit parameters and gain vectors, the equalizer was able to shape the spectral content of the signal and emphasize specific frequency ranges.
+
+Analysis of the individual filter responses confirmed that each filter successfully isolated its intended frequency band. The overall system frequency response demonstrated that different gain presets could effectively modify the spectral balance of the signal, producing bass-boost and treble-boost behaviors consistent with typical audio equalizers.
+
+Application of the equalizer to the bird vocalization recording demonstrated the practical effectiveness of the design. Spectrogram analysis showed that the filtered signal improved the visibility of bird chirps by reducing background noise and increasing the prominence of frequency bands associated with vocalizations. In particular, the enhanced contrast in the boxed spectrogram region highlighted recurring chirp structures that were less distinguishable in the original recording.
+
+Overall, the results demonstrate that a parallel filter-bank architecture combined with adjustable gain coefficients provides a flexible and effective approach for audio signal enhancement. This project illustrates how classical circuit-based filtering concepts can be applied to digital signal processing tasks such as noise reduction and acoustic feature isolation.
 
 
 
 \begin{thebibliography}{00}
-\bibitem{b1} T. Tahara, M. K. A. Gavina, T. Kawano, and others, “Asymptotic stability of a modified Lotka-Volterra model with small immigrations,” Sci. Rep., vol. 8, p. 7029, May 2018. [Online]. Available: https://doi.org/10.1038/s41598-018-25436-2.=
-\bibitem{b2} National Park Service, "The Challenge of Understanding Northern Yellowstone Elk Dynamics After Wolf Reintroduction," Yellowstone National Park, 2016. [Online]. Available: https://www.nps.gov/yell/learn/ys-24-1-the-challenge-of-understanding-northern-yellowstone-elk-dynamics-after-wolf-reintroduction.htm. [Accessed: Mar. 15, 2025].
-\bibitem{b3} M. E. Gilpin, "The role of spatial structure in predator-prey dynamics," Ecology, vol. 89, no. 9, pp. 2585-2597, 2008. [Online]. Available: https://pubmed.ncbi.nlm.nih.gov/18707412/. [Accessed: Mar. 15, 2025].
+
+\bibitem{b1}
+A. V. Oppenheim and A. S. Willsky, \textit{Signals and Systems}, 2nd ed.
+Upper Saddle River, NJ, USA: Prentice Hall, 1997.
+
+\bibitem{b2}
+A. V. Oppenheim and R. W. Schafer,
+\textit{Discrete-Time Signal Processing}, 3rd ed.
+Upper Saddle River, NJ, USA: Prentice Hall, 2010.
+
+\bibitem{b3}
+S. W. Smith,
+\textit{The Scientist and Engineer's Guide to Digital Signal Processing}.
+San Diego, CA, USA: California Technical Publishing, 1997.
+
+\bibitem{b4}
+L. R. Rabiner and B. Gold,
+\textit{Theory and Application of Digital Signal Processing}.
+Englewood Cliffs, NJ, USA: Prentice Hall, 1975.
 
 \end{thebibliography}
 
-<<<<<<< HEAD
 \section*{Appendix}
 
 [put leftover graphs here]
-=======
+
+
 \newpage
 \appendices
+
+The following figures provide additional characterization of the individual filter stages and the overall equalizer system. These plots supplement the results discussed in the main body of the report and illustrate the behavior of the designed band-pass filters and the resulting system response.
+
+\subsection{Impulse Responses of Individual Filters}
+
+Figure~\ref{fig:impulse_responses} shows the impulse responses of the five band-pass filters used in the equalizer architecture. Each impulse response corresponds to the time-domain behavior of the associated RLC circuit described in Section II. The responses exhibit damped oscillatory behavior consistent with second-order band-pass systems, with decay rates determined by the circuit parameters and Q-factor.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.48\textwidth]{figs/filter_impulse_response_2.jpg}
+\caption{Impulse responses of the five band-pass filters used in the equalizer design.}
+\label{fig:impulse_responses}
+\end{figure}
+
+\subsection{Additional Filter Frequency Responses}
+
+Figure~\ref{fig:filter_freq_extra} shows additional magnitude and phase responses of the individual filters. These plots further confirm the band-pass behavior of each filter stage and illustrate the separation of frequency bands across the system.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.48\textwidth]{figs/filter_freq_response_2.jpg}
+\caption{Additional magnitude and phase responses for the individual band-pass filters.}
+\label{fig:filter_freq_extra}
+\end{figure}
+
+\subsection{Overall Equalizer Response}
+
+Figure~\ref{fig:eq_response_extra} shows the overall magnitude and phase response of the equalizer when all filter stages and gain weights are combined. The response reflects the cumulative spectral shaping produced by the parallel filter architecture and gain vector applied in the system.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.48\textwidth]{figs/filter_ovr_response_2.jpg}
+\caption{Overall equalizer magnitude and phase response for the combined filter system.}
+\label{fig:eq_response_extra}
+\end{figure}
+
 \onecolumn
 \section{II. Methods}
 \subsection{Circuit Frequency Response Derivation}
@@ -347,6 +452,5 @@ $i$ & R (\Omega) & L (mH) & C (\mu F)\\
     \item Bass boost: $\vec{k} = (10, 1, 1, 0.95, 0.82)$
     \item Treble boost: $\vec{k} = (0.8, 1, 0.5, 3.5, 3.5)$
 \end{itemize}
->>>>>>> 53fac5c1a6a6bae61dc7edf6aae69bc37615ac72
 
 \end{document}
