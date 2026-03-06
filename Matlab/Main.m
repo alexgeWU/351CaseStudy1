@@ -10,7 +10,7 @@ disp('Loading audio files...');
 [xs, xsfs] = audioread('Space Station - Treble Cut.wav');
 [xg, xgfs] = audioread('Giant Steps Bass Cut.wav');
 
-%% Creating Filters
+%% Song Equalizer
 disp('Defining filters...');
 R0 = 140;   L0 = 500e-3; C0 = 50e-6;
 R1 = 220;  L1 = 112e-3; C1 = 10e-6;
@@ -29,6 +29,7 @@ tf1 = tf(b1, a1);
 tf2 = tf(b2, a2);
 tf3 = tf(b3, a3);
 tf4 = tf(b4, a4);
+
 filters = {tf0, tf1, tf2, tf3, tf4};
 
 %% Modify Gain and Process Signals
@@ -112,15 +113,15 @@ end
 %% Plot Total System Responses
 figure;
 
-H_total_normal = gain_normal * H_indv;
+H_total = gain_normal * H_indv;
 H_total_bass   = gain_bass * H_indv;
 H_total_treble = gain_treble * H_indv;
 
-mag_normal = 20*log10(abs(H_total_normal));
+mag_normal = 20*log10(abs(H_total));
 mag_bass   = 20*log10(abs(H_total_bass));
 mag_treble = 20*log10(abs(H_total_treble));
 
-phase_normal = angle(H_total_normal)/pi;
+phase_normal = angle(H_total)/pi;
 phase_bass   = angle(H_total_bass)/pi;
 phase_treble = angle(H_total_treble)/pi;
 
@@ -178,3 +179,142 @@ playeryg_treble = audioplayer(yg_treble, xgfs);
 % playblocking(playeryg_bass);
 % disp('Treble Giant Steps...');
 % playblocking(playeryg_treble);
+
+%% Bird Equalizer
+
+% Read Audio File
+disp('Loading Bird file...');
+[xb, xbfs] = audioread('SNR Recording 2026-02-15 08_58.wav');
+
+%% Creating Filters
+disp('Defining filters...');
+
+R0 = 1e3;   L0 = 3.9e-3; C0 = 10e-6;   % 200 Hz
+R1 = 10;   L1 = 7e-3;   C1 = 1e-6;     % 1.9 kHz
+R2 = 10;   L2 = 4.7e-3; C2 = 1e-6;     % 2.3 kHz
+R3 = 100;  L3 = 3e-3;   C3 = 1e-6;     % 2.9 kHz
+R4 = 26.5; L4 = 2.2e-3; C4 = 1e-6;     % 3.4 kHz
+
+b0 = [R0/L0 0]; a0 = [1 R0/L0 1/(L0*C0)];
+b1 = [R1/L1 0]; a1 = [1 R1/L1 1/(L1*C1)];
+b2 = [R2/L2 0]; a2 = [1 R2/L2 1/(L2*C2)];
+b3 = [R3/L3 0]; a3 = [1 R3/L3 1/(L3*C3)];
+b4 = [R4/L4 0]; a4 = [1 R4/L4 1/(L4*C4)];
+
+tf0 = tf(b0, a0);
+tf1 = tf(b1, a1);
+tf2 = tf(b2, a2);
+tf3 = tf(b3, a3);
+tf4 = tf(b4, a4);
+
+filters = {tf0, tf1, tf2, tf3, tf4};
+
+% Modify gain
+
+gain_bird = [0 1 6 5 10]; % Bird
+
+%% Process Signal
+disp('Processing Bird Noises...');
+yb = process_signal(xb, xbfs, filters, gain_bird);
+
+%% Analyze Frequency and Impulse Responses with Plots
+
+% Analyze Frequency Responses
+f = logspace(0,5,1000);
+w = 2*pi*f;
+
+H0 = freqs(b0,a0,w);
+H1 = freqs(b1,a1,w);
+H2 = freqs(b2,a2,w);
+H3 = freqs(b3,a3,w);
+H4 = freqs(b4,a4,w);
+
+H_indv = [H0; H1; H2; H3; H4];
+
+figure;
+for i = 1:5
+    H_current = H_indv(i, :); 
+    
+    mag_dB = 20*log10(abs(H_current));
+    phase_norm = angle(H_current)/pi;
+    
+    % Plot Magnitude
+    subplot(5, 2, 2*i - 1);
+    semilogx(f, mag_dB);
+    ylabel('Mag (dB)');
+    title(sprintf('Filter %d Frequency Response', i-1));
+    grid on;
+    if i == 5; xlabel('Frequency (Hz)'); end
+    
+    % Plot Phase
+    subplot(5, 2, 2*i);
+    semilogx(f, phase_norm);
+    ylabel('Phase / \pi (rad)');
+    title(sprintf('Filter %d Frequency Response', i-1));
+    grid on;
+    if i == 5; xlabel('Frequency (Hz)'); end
+end
+
+% Analyze Impulse Responses
+disp('Calculating Impulse Responses...');
+N = 1000;
+
+% Values to loop easily
+b_vals = {b0, b1, b2, b3, b4};
+a_vals = {a0, a1, a2, a3, a4};
+t_ends = [0.05, 0.01, 0.01, 0.001, 0.001];
+
+figure;
+for i = 1:5
+    % Approximate impulse response using lsim
+    t_imp = linspace(0, t_ends(i), N);
+    x_imp = [1, zeros(1, N-1)];
+    h_approx = lsim(b_vals{i}, a_vals{i}, x_imp, t_imp);
+    
+    subplot(5, 1, i);
+    plot(t_imp * 1000, h_approx);
+    title(sprintf('Filter %d Impulse Response', i-1));
+    ylabel('Amplitude');
+    grid on;
+    xlabel('Time (ms)');
+end
+
+%% Plot Total System Responses
+figure;
+
+H_total = gain_bird * H_indv;
+
+mag_total = 20*log10(abs(H_total));
+
+phase_total = angle(H_total)/pi;
+
+
+% Plot Magnitude
+subplot(2, 1, 1);
+semilogx(f, mag_total);
+grid on;
+
+title('Magnitude Response');
+ylabel('Magnitude (dB)');
+
+% Plot Phase
+subplot(2, 1, 2);
+semilogx(f, phase_total); 
+grid on;
+
+title('Phase Response');
+ylabel('Phase / \pi (rad)');
+xlabel('Frequency (Hz)');
+
+%% Play Audio
+
+playerxb = audioplayer(xb, xbfs);
+playeryb = audioplayer(yb, xbfs);
+
+% disp('Original Bird Sounds...');
+% playblocking(playerxb);
+% disp('Equalized Bird Sounds..');
+% playblocking(playeryb);
+
+
+
