@@ -13,11 +13,11 @@ disp('Loading audio files...');
 disp('Defining filters...');
 
 
-R0 = 1e3;   L0 = 3.9e-3; C0 = 10e-6;  % 200 Hz
+R0 = 1;   L0 = 3.9e-3;  C0 = 10e-6;  % 200 Hz
 R1 = 10;   L1 = 7e-3;   C1 = 1e-6;     % 1.9 kHz
 R2 = 10;   L2 = 4.7e-3; C2 = 1e-6;     % 2.3 kHz
-R3 = 100;  L3 = 3e-3;   C3 = 1e-6;     % 2.9 kHz
-R4 = 26.5; L4 = 2.2e-3; C4 = 1e-6;     % 3.4 kHz
+R3 = 10;  L3 = 3e-3;   C3 = 1e-6;     % 2.9 kHz
+R4 = 10; L4 = 2.2e-3; C4 = 1e-6;     % 3.4 kHz
 
 
 tf0 = tf([R0/L0 0],[1 R0/L0 1/(L0*C0)]);

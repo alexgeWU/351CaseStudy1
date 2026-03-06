@@ -171,14 +171,14 @@ playeryg_normal = audioplayer(yg_normal, xgfs);
 playeryg_bass = audioplayer(yg_bass, xgfs);
 playeryg_treble = audioplayer(yg_treble, xgfs);
 
-% disp('Original Giant Steps...');
-% playblocking(playerxg);
-% disp('Equalized Giant Steps...');
-% playblocking(playeryg_normal);
-% disp('Bass Giant Steps...');
-% playblocking(playeryg_bass);
-% disp('Treble Giant Steps...');
-% playblocking(playeryg_treble);
+disp('Original Giant Steps...');
+playblocking(playerxg);
+disp('Equalized Giant Steps...');
+playblocking(playeryg_normal);
+disp('Bass Giant Steps...');
+playblocking(playeryg_bass);
+disp('Treble Giant Steps...');
+playblocking(playeryg_treble);
 
 %% Bird Equalizer
 
