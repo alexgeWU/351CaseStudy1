@@ -7,6 +7,9 @@
 \usepackage{xcolor}
 \usepackage{comment}
 \usepackage{circuitikz}
+\usepackage{float}
+\usepackage{stfloats}
+
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
@@ -82,9 +85,19 @@ identification of bird vocalizations in noisy environments through spectral anal
 
 
 \section{Methods}
-Resistor-Inductor-Capacitor (RLC) circuits have long been used as a method to implement band-pass filters. We can derive transfer functions using the impedance of the devices, and because these devices are linear, they can be applied to each sinusoidal component of an input function. Consider the following circuit:
+\subsection{Formulation}
+Let $h_i(t)$ be the impulse response of an linear time-invariant (LTI) system that is designed to pick out a specific band of frequencies. Figure 1 shows five of these systems that pick out a band of frequency. Note that the frequency ranges are obtained as a result of parameters discussed later in the design.
 
-\begin{figure}[h]
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\linewidth]{systemdesign.jpg}
+    \caption{Equalizer system design.}
+    \label{fig:placeholder}
+\end{figure}
+
+In order to implement $h_i(t)$, we use a band-pass filter. Resistor-inductor-capacitor (RLC) circuits are networks that have long been used as a method to implement band-pass filters. We can derive transfer functions using the impedance of the devices, and because these devices are linear, they can be applied to each sinusoidal component of an input function. Consider the following circuit:
+
+\begin{figure}[H]
 \centering
 \begin{circuitikz}
 \draw
@@ -112,14 +125,14 @@ Resistor-Inductor-Capacitor (RLC) circuits have long been used as a method to im
 \caption{Series RLC band-pass filter with output measured across the resistor.}
 \end{figure}
 
-This circuit picks out one frequency band and attenuates others based on the values passed into R, L, and C. Equation 1 is the $i$'th's circuit's transfer function where $i =1,2, ..., 5$ (see Appendix II.A for derivation).
+This circuit picks out one frequency band and attenuates others based on the values passed into $R$, $L$, and $C$. Equation 1 is the $i$'th's circuit's transfer function where $i =1,2, ..., 5$ (see Appendix II.A for derivation).
 
 \begin{equation}
 \large
      X_i(jw) = \frac{jw\frac{R}{L}}{(j\omega)^2 + j\omega \frac{R}{L} + \frac{1}{L C}}
 \end{equation}
 
-Looking at Equation 1, we can see that if $\omega =0$, $X_i(j\omega) = 0$, and if $\omega \to \infty$, $X_i(j\omega) \to 0$. Thus we know that this filter is neither lowpass nor highpass. In fact the center frequency for this circuit configuration is $\omega=\frac{1}{}$
+Looking at Equation 1, we can see that if $\omega =0$, $X_i(j\omega) = 0$, and if $\omega \to \infty$, $X_i(j\omega) \to 0$. Thus we know that this filter is neither lowpass nor highpass.
 
 Next, we will introduce the continuous time linear constant coefficient differential equation (LCCDE) for this circuit, which is given by (see Appendix II.B for derivation).
 
@@ -128,10 +141,37 @@ Next, we will introduce the continuous time linear constant coefficient differen
     \frac{dv_{in}}{dt} = \frac{L}{R}\frac{d^2v_{out}}{dt^2} + \frac{dv_{out}}{dt} + \frac{1}{RC}v_{out} 
 \end{equation}
 
-The optimal input parameters R, L, and C for each circuit were determined qualitatively through trial and error and are listed in Appendix II.C. Note that different circuit parameters were chosen for the song task and the bird task. We kept the same band ranges by keeping $L$ and $C$ constant since they determine the center frequency. Then, when switching to the bird task, we changed $R$ in each band in order to change the $Q$ factor of the circuit. The $Q$ factor intuitively measures how well the circuit can "pick" out its frequency range. For the bird case, we wanted a smaller range of frequencies in the higher frequency case, so we increased the $Q$ factor.
+Different circuit parameters were chosen for each task. This is because in each task, we want to pick different bands, and within those bands, sometimes we may need to limit the bandwidth. We controlled the center frequency by using the fact that $\omega_c=\frac{1}{\sqrt{LC}}$. In order to control the bandwidth, we utilized the idea of the Q-factor of the circuit, given by
+\begin{equation}
+    \large
+    Q = \frac{w_cL}{R}
+\end{equation}
 
- 
+Intuitively, the $Q$ factor measures how well the circuit can "pick" out its frequency range. For a higher Q-factor, the bandwidth is smaller, and vice versa. Because $Q \sim R^{-1}$, we can increase the bandwidth by increasing $R$, and vice versa. 
 
+The optimal input parameters $R$, $L$, and $C$ for each circuit and each task were determined qualitatively through trial and error and are listed in Appendix II.C. 
+
+\subsection{Song Task}
+In this task, we aim to minimize loss of frequency bands while also separating bands into distinct categories. Figure 3 lists the original system with the frequency ranges added on. Note that the ranges are categorized by their half-power cutoff frequencies.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\linewidth]{systemdesign_song.jpg}
+    \caption{Equalizer system design with song task frequency ranges}
+    \label{fig:placeholder}
+\end{figure}
+
+$\vec{k} = (k_1, ..., k_5)$ is a gain vector that is customization within our code. For each modification within the song task, we list $\vec{k}$ in Appendix II.D.
+
+\subsection{Bird Task}
+For the bird task, we want narrower bands around precise frequencies. We found these bans by looking into at the spectrogram of the bird audio and finding where the bird chirps are (see Figure x for a zoomed in view).3
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\linewidth]{systemdesign_bird.jpg}
+    \caption{Equalizer system design with bird task frequency ranges}
+    \label{fig:placeholder}
+\end{figure}
 
 
 \section{Results}
@@ -256,6 +296,7 @@ We know that $v_{out}=iR \implies i = \frac{v_{out}}{R}$. So,
 \end{equation}
 \newpage
 \subsection{Optimal Circuit Parameters}
+\textbf{UPDATE THESE}
 \begin{table}[h]
 \centering
 
@@ -290,5 +331,12 @@ $i$ & R (\Omega) & L (mH) & C (\mu F)\\
 \end{minipage}
 
 \end{table}
+
+\subsection{Gain Vectors}
+\begin{itemize}
+    \item Normal: $\vec{k} = (0.8, 1, 0.9, 0.95, 0.9)$
+    \item Bass boost: $\vec{k} = (10, 1, 1, 0.95, 0.82)$
+    \item Treble boost: $\vec{k} = (0.8, 1, 0.5, 3.5, 3.5)$
+\end{itemize}
 
 \end{document}
