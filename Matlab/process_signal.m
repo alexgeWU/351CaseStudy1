@@ -1,4 +1,4 @@
-function y = processSignal(x, fs, filters, gains)
+function y = process_signal(x, fs, filters, gains)
     numSamples = length(x);
     numChannels = size(x, 2);
     
