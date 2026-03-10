@@ -215,6 +215,69 @@ audiowrite('audios/treble_gs.wav', yg_treble, xbfs);
 % disp('Treble Giant Steps...');
 % playblocking(playeryg_treble);
 
+%% Plot Spectrograms
+
+disp('Generating plots...');
+figure;
+subplot(2,2,1); spectrogram(xs(:,1), 1024, 200, 1024, xsfs, 'yaxis');
+title('Original Space Station 1'); clim([-120 -20]);
+subplot(2,2,2); spectrogram(ys_normal(:,1), 1024, 200, 1024, xsfs, 'yaxis');
+title('Unity Space Station 1'); clim([-120 -20]);
+subplot(2,2,3); spectrogram(xs(:,2), 1024, 200, 1024, xsfs, 'yaxis');
+title('Original Space Station 2'); clim([-120 -20]);
+subplot(2,2,4); spectrogram(ys_normal(:,2), 1024, 200, 1024, xsfs, 'yaxis');
+title('Unity Space Station 2'); clim([-120 -20]);
+
+figure;
+subplot(2,2,1); spectrogram(xg(:,1), 1024, 200, 1024, xgfs, 'yaxis');
+title('Original Giant Steps 1'); clim([-100 -30]);
+subplot(2,2,2); spectrogram(yg_normal(:,1), 1024, 200, 1024, xgfs, 'yaxis');
+title('Unity Giant Steps 1'); clim([-100 -30]);
+subplot(2,2,3); spectrogram(xg(:,2), 1024, 200, 1024, xgfs, 'yaxis');
+title('Original Giant Steps 2'); clim([-100 -30]);
+subplot(2,2,4); spectrogram(yg_normal(:,2), 1024, 200, 1024, xgfs, 'yaxis');
+title('Unity Giant Steps 2'); clim([-100 -30]);
+
+figure;
+subplot(2,2,1); spectrogram(xs(:,1), 1024, 200, 1024, xsfs, 'yaxis');
+title('Original Space Station 1'); clim([-120 -20]);
+subplot(2,2,2); spectrogram(ys_bass(:,1), 1024, 200, 1024, xsfs, 'yaxis');
+title('Bass Boosted Space Station 1'); clim([-120 -20]);
+subplot(2,2,3); spectrogram(xs(:,2), 1024, 200, 1024, xsfs, 'yaxis');
+title('Original Space Station 2'); clim([-120 -20]);
+subplot(2,2,4); spectrogram(ys_bass(:,2), 1024, 200, 1024, xsfs, 'yaxis');
+title('Bass Boosted Space Station 2'); clim([-120 -20]);
+
+figure;
+subplot(2,2,1); spectrogram(xg(:,1), 1024, 200, 1024, xgfs, 'yaxis');
+title('Original Giant Steps 1'); clim([-100 -30]);
+subplot(2,2,2); spectrogram(yg_bass(:,1), 1024, 200, 1024, xgfs, 'yaxis');
+title('Bass Boosted Giant Steps 1'); clim([-100 -30]);
+subplot(2,2,3); spectrogram(xg(:,2), 1024, 200, 1024, xgfs, 'yaxis');
+title('Original Giant Steps 2'); clim([-100 -30]);
+subplot(2,2,4); spectrogram(yg_bass(:,2), 1024, 200, 1024, xgfs, 'yaxis');
+title('Bass Boosted Giant Steps 2'); clim([-100 -30]);
+
+figure;
+subplot(2,2,1); spectrogram(xs(:,1), 1024, 200, 1024, xsfs, 'yaxis');
+title('Original Space Station 1'); clim([-120 -20]);
+subplot(2,2,2); spectrogram(ys_treble(:,1), 1024, 200, 1024, xsfs, 'yaxis');
+title('Treble Boosted Space Station 1'); clim([-120 -20]);
+subplot(2,2,3); spectrogram(xs(:,2), 1024, 200, 1024, xsfs, 'yaxis');
+title('Original Space Station 2'); clim([-120 -20]);
+subplot(2,2,4); spectrogram(ys_treble(:,2), 1024, 200, 1024, xsfs, 'yaxis');
+title('Treble Boosted Space Station 2'); clim([-120 -20]);
+
+figure;
+subplot(2,2,1); spectrogram(xg(:,1), 1024, 200, 1024, xgfs, 'yaxis');
+title('Original Giant Steps 1'); clim([-100 -30]);
+subplot(2,2,2); spectrogram(yg_treble(:,1), 1024, 200, 1024, xgfs, 'yaxis');
+title('Treble Boosted Giant Steps 1'); clim([-100 -30]);
+subplot(2,2,3); spectrogram(xg(:,2), 1024, 200, 1024, xgfs, 'yaxis');
+title('Original Giant Steps 2'); clim([-100 -30]);
+subplot(2,2,4); spectrogram(yg_treble(:,2), 1024, 200, 1024, xgfs, 'yaxis');
+title('Treble Boosted Giant Steps 2'); clim([-100 -30]);
+
 %% Bird Equalizer
 
 % Read Audio File
@@ -280,10 +343,10 @@ H_indv = [H0; H1; H2; H3; H4];
 figure;
 for i = 1:5
     H_current = H_indv(i, :); 
-    
+
     mag_dB = 20*log10(abs(H_current));
     phase_norm = angle(H_current)/pi;
-    
+
     % Plot Magnitude
     subplot(5, 2, 2*i - 1);
     semilogx(f, mag_dB);
@@ -291,7 +354,7 @@ for i = 1:5
     title(sprintf('Filter %d Frequency Response', i-1));
     grid on;
     if i == 5; xlabel('Frequency (Hz)'); end
-    
+
     % Plot Phase
     subplot(5, 2, 2*i);
     semilogx(f, phase_norm);
@@ -316,7 +379,7 @@ for i = 1:5
     t_imp = linspace(0, t_ends(i), N);
     x_imp = [1, zeros(1, N-1)];
     h_approx = lsim(b_vals{i}, a_vals{i}, x_imp, t_imp);
-    
+
     subplot(5, 1, i);
     plot(t_imp * 1000, h_approx);
     title(sprintf('Filter %d Impulse Response', i-1));
@@ -363,5 +426,14 @@ playeryb = audioplayer(yb, xbfs);
 % playblocking(playeryb);
 
 audiowrite('audios/filteredbirds.wav', yb, xbfs);
+%% Plot Spectrogram
+
+figure();
+subplot(1,2,1); spectrogram(xb, 1024, 200, 1024, xbfs, 'yaxis');
+title('Original Bird Noises'); clim([-120 -80]);
+subplot(1,2,2); spectrogram(yb, 1024, 200, 1024, xbfs, 'yaxis');
+title('Filtered Bird Noises'); clim([-110 -80]);
+disp('Done ploting');
+
 
 
