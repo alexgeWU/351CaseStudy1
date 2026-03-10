@@ -12,7 +12,7 @@ disp('Loading audio files...');
 
 %% Song Equalizer
 disp('Defining filters...');
-R0 = 140;   L0 = 500e-3; C0 = 50e-6;
+R0 = 140;  L0 = 500e-3; C0 = 50e-6;
 R1 = 220;  L1 = 112e-3; C1 = 10e-6;
 R2 = 200;  L2 = 50e-3;  C2 = 1e-6;
 R3 = 800;  L3 = 30e-3;  C3 = .1e-6;
@@ -48,6 +48,32 @@ yg_normal = process_signal(xg, xgfs, filters, gain_normal);
 yg_bass = process_signal(xg, xgfs, filters, gain_bass);
 yg_treble = process_signal(xg, xgfs, filters, gain_treble);
 
+%% Plot Spectrograms Original vs Equalized
+disp('Generating plots...');
+
+figure;
+subplot(2,2,1); spectrogram(xs(:, 1), 1024, 200, 1024, xsfs, 'yaxis');
+title('Original Space Station', 'FontSize', 14); clim([-120 -70]); xlim([0, 8]);
+subplot(2,2,2); spectrogram(ys_normal(:, 1), 1024, 200, 1024, xsfs, 'yaxis');
+title('Normal Space Station', 'FontSize', 14); clim([-120 -70]); xlim([0, 8]);
+subplot(2,2,3); spectrogram(ys_bass(:, 1), 1024, 200, 1024, xsfs, 'yaxis');
+title('Bass Boosted Space Station', 'FontSize', 14); clim([-120 -70]); xlim([0, 8]);
+subplot(2,2,4); spectrogram(ys_treble(:, 1), 1024, 200, 1024, xsfs, 'yaxis');
+title('Treble Boosted Space Station', 'FontSize', 14); clim([-120 -70]); xlim([0, 8]);
+
+figure;
+subplot(2,2,1); spectrogram(xg(:, 1), 1024, 200, 1024, xsfs, 'yaxis');
+title('Original Giant Steps', 'FontSize', 14); clim([-120 -70]); xlim([0, 8]);
+subplot(2,2,2); spectrogram(yg_normal(:, 1), 1024, 200, 1024, xsfs, 'yaxis');
+title('Normal Giant Steps', 'FontSize', 14); clim([-120 -70]); xlim([0, 8]);
+subplot(2,2,3); spectrogram(yg_bass(:, 1), 1024, 200, 1024, xsfs, 'yaxis');
+title('Bass Boosted Giant Steps', 'FontSize', 14); clim([-120 -70]); xlim([0, 8]);
+subplot(2,2,4); spectrogram(yg_treble(:, 1), 1024, 200, 1024, xsfs, 'yaxis');
+title('Treble Boosted Giant Steps', 'FontSize', 14); clim([-120 -70]); xlim([0, 8]);
+
+
+disp('Done ploting');
+
 %% Analyze Frequency and Impulse Responses with Plots
 
 % Analyze Frequency Responses
@@ -63,28 +89,29 @@ H4 = freqs(b4,a4,w);
 H_indv = [H0; H1; H2; H3; H4];
 
 figure;
+t = tiledlayout(5,2);  
 for i = 1:5
-    H_current = H_indv(i, :); 
+    H_current = H_indv(i,:);
     
     mag_dB = 20*log10(abs(H_current));
     phase_norm = angle(H_current)/pi;
-    
-    % Plot Magnitude
-    subplot(5, 2, 2*i - 1);
-    semilogx(f, mag_dB);
-    ylabel('Mag (dB)');
-    title(sprintf('Filter %d Frequency Response', i-1));
-    grid on;
-    if i == 5; xlabel('Frequency (Hz)'); end
-    
-    % Plot Phase
-    subplot(5, 2, 2*i);
-    semilogx(f, phase_norm);
-    ylabel('Phase / \pi (rad)');
-    title(sprintf('Filter %d Frequency Response', i-1));
-    grid on;
-    if i == 5; xlabel('Frequency (Hz)'); end
+
+    % Magnitude
+    nexttile(2*i-1)
+    semilogx(f, mag_dB)
+    title(sprintf('Filter %d Magnitude', i-1))
+    grid on
+    if i==5; xlabel('Frequency (Hz)'); end
+
+    % Phase
+    nexttile(2*i)
+    semilogx(f, phase_norm)
+    title(sprintf('Filter %d Phase', i-1))
+    grid on
+    if i==5; xlabel('Frequency (Hz)'); end
 end
+ylabel(t,'Magnitude (dB) / Phase (\pi rad)')
+exportgraphics(gcf, 'figures/freqresponse.jpg')
 
 % Analyze Impulse Responses
 disp('Calculating Impulse Responses...');
@@ -157,6 +184,10 @@ playerys_normal = audioplayer(ys_normal, xsfs);
 playerys_bass = audioplayer(ys_bass, xsfs);
 playerys_treble = audioplayer(ys_treble, xsfs);
 
+audiowrite('audios/unity_ss.wav', ys_normal, xbfs);
+audiowrite('audios/bass_ss.wav', ys_bass, xbfs);
+audiowrite('audios/treble_ss.wav', ys_treble, xbfs);
+
 % disp('Original Space Station...');
 % playblocking(playerxs);
 % disp('Norm Space Station...');
@@ -171,14 +202,18 @@ playeryg_normal = audioplayer(yg_normal, xgfs);
 playeryg_bass = audioplayer(yg_bass, xgfs);
 playeryg_treble = audioplayer(yg_treble, xgfs);
 
-disp('Original Giant Steps...');
-playblocking(playerxg);
-disp('Equalized Giant Steps...');
-playblocking(playeryg_normal);
-disp('Bass Giant Steps...');
-playblocking(playeryg_bass);
-disp('Treble Giant Steps...');
-playblocking(playeryg_treble);
+audiowrite('audios/unity_gs.wav', yg_normal, xbfs);
+audiowrite('audios/bass_gs.wav', yg_bass, xbfs);
+audiowrite('audios/treble_gs.wav', yg_treble, xbfs);
+ 
+% disp('Original Giant Steps...');
+% playblocking(playerxg);
+% disp('Equalized Giant Steps...');
+% playblocking(playeryg_normal);
+% disp('Bass Giant Steps...');
+% playblocking(playeryg_bass);
+% disp('Treble Giant Steps...');
+% playblocking(playeryg_treble);
 
 %% Bird Equalizer
 
@@ -189,11 +224,11 @@ disp('Loading Bird file...');
 %% Creating Filters
 disp('Defining filters...');
 
-R0 = 1e3;   L0 = 3.9e-3; C0 = 10e-6;   % 200 Hz
-R1 = 10;   L1 = 7e-3;   C1 = 1e-6;     % 1.9 kHz
-R2 = 10;   L2 = 4.7e-3; C2 = 1e-6;     % 2.3 kHz
-R3 = 100;  L3 = 3e-3;   C3 = 1e-6;     % 2.9 kHz
-R4 = 26.5; L4 = 2.2e-3; C4 = 1e-6;     % 3.4 kHz
+R0 = 1e3;   L0 = 3.9e-3; C0 = 10e-6;   
+R1 = 10;   L1 = 7e-3;   C1 = 1e-6;     
+R2 = 10;   L2 = 4.7e-3; C2 = 1e-6;    
+R3 = 100;  L3 = 3e-3;   C3 = 1e-6;     
+R4 = 26.5; L4 = 2.2e-3; C4 = 1e-6;     
 
 b0 = [R0/L0 0]; a0 = [1 R0/L0 1/(L0*C0)];
 b1 = [R1/L1 0]; a1 = [1 R1/L1 1/(L1*C1)];
@@ -216,6 +251,17 @@ gain_bird = [0 1 6 5 10]; % Bird
 %% Process Signal
 disp('Processing Bird Noises...');
 yb = process_signal(xb, xbfs, filters, gain_bird);
+
+%% Plot Spectrograms Original vs Equalized
+disp('Generating plots...');
+
+figure(5);
+subplot(1,2,1); spectrogram(xb, 1024, 200, 1024, xbfs, 'yaxis');
+title('Original Bird Noises'); clim([-120 -80]);
+subplot(1,2,2); spectrogram(yb, 1024, 200, 1024, xbfs, 'yaxis');
+title('Filtered Bird Noises'); clim([-110 -80]);
+exportgraphics(gcf, 'figures/birdspectograms.jpg')
+disp('Done ploting');
 
 %% Analyze Frequency and Impulse Responses with Plots
 
@@ -316,5 +362,6 @@ playeryb = audioplayer(yb, xbfs);
 % disp('Equalized Bird Sounds..');
 % playblocking(playeryb);
 
+audiowrite('audios/filteredbirds.wav', yb, xbfs);
 
 
